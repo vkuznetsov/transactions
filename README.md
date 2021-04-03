@@ -3,4 +3,5 @@
 
 
 ### Велосипед 1 - репликация с лидером.
-#1
+1. [Реализовать выборы для репликации](https://github.com/vkuznetsov/transactions/issues/1)
+2. Реализовать cluster autohealing
