@@ -5,6 +5,9 @@ on:
     branches: [ master ]
   pull_request:
     branches: [ master ]
+    
+env:
+  MIX_ENV: test    
 
 jobs:
   build:
@@ -49,7 +52,7 @@ jobs:
         mix dialyzer --plt  
         
     - name: Check types
-      run: mix dialyzer
+      run: mix dialyzer --no-check --halt-exit-status
       
     - name: Run tests
       run: mix test
