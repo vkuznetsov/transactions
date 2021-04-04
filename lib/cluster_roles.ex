@@ -3,18 +3,21 @@ defmodule Transactions.ClusterRoles do
 
   @type instance :: any()
   @type role_name :: :leader | :sync_replica | :async_replica
-  @type t :: {:cluster_role_registration, module(), instance}
+  @type t :: {:cluster_roles, module(), instance}
 
   @callback register(instance(), role_name, pid()) :: :ok | {:error, :role_already_exists}
   @callback get(instance(), role_name) :: {:ok, pid()} | {:error, :notfound}
 
+  @spec new(module(), instance()) :: t
+  def new(module, instance), do: {:cluster_roles, module, instance}
+
   @spec register(t, role_name, pid()) :: :ok | {:error, :role_already_exists}
-  def register({:cluster_role_registration, impl, instance}, role_name, pid) do
+  def register({:cluster_roles, impl, instance}, role_name, pid) do
     impl.register(instance, role_name, pid)
   end
 
   @spec get(t, role_name) :: {:ok, pid()} | {:error, :notfound}
-  def get({:cluster_role_registration, impl, instance}, role_name) do
+  def get({:cluster_roles, impl, instance}, role_name) do
     impl.get(instance, role_name)
   end
 

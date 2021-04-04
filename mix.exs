@@ -23,7 +23,8 @@ defmodule Transaction.MixProject do
     [
       {:typed_struct, "~> 0.2.1"},
       {:credo, "~> 1.5", only: [:dev]},
-      {:dialyxir, "~> 1.1", only: [:dev]}
+      {:dialyxir, "~> 1.1", only: [:dev, :test]},
+      {:hammox, "~> 0.5.0", only: [:test]}
     ]
   end
 end

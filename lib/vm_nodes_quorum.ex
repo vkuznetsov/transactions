@@ -1,6 +1,5 @@
-defmodule Transaction.VmNodesQuorum do
+defmodule Transactions.VmNodesQuorum do
   alias Transactions.Quorum
-  alias :erpc, as: Erpc
 
   @moduledoc false
   @behaviour Quorum
@@ -11,11 +10,16 @@ defmodule Transaction.VmNodesQuorum do
 
     accessible_nodes =
       nodes
-      |> Task.async_stream(&Erpc.call(&1, fn -> :ok end), ordered: false, max_concurrency: Enum.count(nodes))
-      |> Enum.filter(&match?(:ok, &1))
+      |> Task.async_stream(&node_available?/1, ordered: false, max_concurrency: Enum.count(nodes))
+      |> Enum.filter(& &1)
 
     me = 1
     min_quorum_count = trunc(cluster_size / 2) + 1
     Enum.count(accessible_nodes) + me >= min_quorum_count
+  end
+
+  @spec node_available?(node()) :: boolean()
+  defp node_available?(node) do
+    :erpc.call(node, fn -> :available end) == :available
   end
 end
