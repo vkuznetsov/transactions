@@ -19,13 +19,16 @@ jobs:
     steps:
       - checkout
 
+      - run: echo "$OTP_VERSION $ELIXIR_VERSION" > .version_file
+      - run: echo "$MIX_ENV" > .mix_env
+
       - run: mix local.hex --force
       - run: mix local.rebar --force
       - restore_cache:
-          key: deps-cache-{{ checksum "mix.lock" }}
+          key: deps-cache-{{ checksum "mix.lock" }}-{{ checksum ".mix_env" }}
       - run: mix do deps.get, deps.compile
       - save_cache:
-          key: deps-cache-{{ checksum "mix.lock" }}
+          key: deps-cache-{{ checksum "mix.lock" }}-{{ checksum ".mix_env" }}
           paths:
             - deps
             - ~/.mix
@@ -36,9 +39,7 @@ jobs:
       - run: mix compile --warnings-as-errors
       - run: mix test
       - run: mix credo
-
-      - run: echo "$OTP_VERSION $ELIXIR_VERSION" > .version_file
-      - run: echo "$MIX_ENV" > .mix_env 
+ 
       - restore_cache:
           keys:
             - plt-cache-{{ checksum ".version_file" }}-{{ checksum "mix.lock" }}-{{ checksum ".mix_env" }}
